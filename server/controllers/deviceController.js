@@ -13,15 +13,30 @@ const getDevices = async(req,res) =>{
     }
 }
 
+const getDeviceByDeviceId = async(req,res) =>{
+    try{
+        const {deviceId} = req.body
+        if (!deviceId) {
+            return res.status(400).json({ msg: 'deviceId is required' });
+        }
+        const deviceExists = await Devices.findOne({deviceId})
+        if(!deviceExists) return res.status(400).json({msg:'Device Not Found'})
+
+        res.status(200).json(deviceExists)
+    }catch(err){
+        res.status(500).json({msg:'Internal Server Error',err});
+    }
+}
+
 
 //Adding Devices
 const addDevices = async(req,res) =>{
     try{
         const {deviceId, siteName, version, status, date} = req.body
-        console.log(req.body);
+        // console.log(req.body);
 
         const device = await Devices.findOne({deviceId})
-        if(device) return res.status(400).json({msg:'Device already exist'})
+        if(device) return res.status(400).json({msg:'Device already exists'})
            
         if(status !== 'Updated' && status !== 'NotUpdated') return res.status(400).json({msg:'Status can be either Updated or NotUpdated'})
 
@@ -70,4 +85,4 @@ const updateDevice = async(req,res) => {
     }
 }
 
-module.exports = {getDevices, addDevices, updateDevice}
+module.exports = {getDevices, getDeviceByDeviceId,addDevices, updateDevice}

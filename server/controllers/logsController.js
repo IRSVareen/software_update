@@ -5,7 +5,11 @@ const Devices = require('../models/deviceModel')
 //Getting Logs
 const getLogs = async (req, res) => {
     try {
-        const { deviceId } = req.params;
+        const { deviceId } = req.body;
+
+        if (!deviceId) {
+            return res.status(400).json({ msg: 'deviceId is required' });
+        }
 
         const deviceExists = await Devices.findOne({ deviceId });
         if (!deviceExists) {
@@ -14,7 +18,7 @@ const getLogs = async (req, res) => {
         const logs = await Logs.find({ deviceId });
         if (logs.length === 0) return res.status(404).json({ msg: 'No Logs Exist' });
 
-        res.status(200).json({ deviceId, logs });
+        res.status(200).json({ logs });
     } catch (err) {
         res.status(500).json({ msg: 'Internal Server Error', err });
     }
@@ -24,8 +28,11 @@ const getLogs = async (req, res) => {
 //Showing Logs in a Calendar Range
 const getLogsInRange = async (req, res) => {
     try {
-        const { deviceId } = req.params;
-        const { startDate, endDate } = req.query;
+        const { deviceId, startDate, endDate } = req.body;
+
+        if (!deviceId) {
+            return res.status(400).json({ msg: 'deviceId is required' });
+        }
 
         if (!startDate || !endDate) {
             return res.status(400).json({ msg: 'startDate and endDate are required in YYYY-MM-DD format' });
@@ -62,8 +69,12 @@ const getLogsInRange = async (req, res) => {
 //Adding logs
 const addLogs = async (req, res) => {
     try {
-        const { deviceId } = req.params
-        const { description, softwareVersion, updateStatus, startTime, endTime, date } = req.body
+        
+        const { deviceId,description, softwareVersion, updateStatus, startTime, endTime, date } = req.body
+
+        if (!deviceId) {
+            return res.status(400).json({ msg: 'deviceId is required' });
+        }
 
         const deviceExists = await Devices.findOne({ deviceId })
         if (!deviceExists) return res.status(400).json({ msg: ' Device Not Found' });
