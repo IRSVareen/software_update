@@ -77,20 +77,21 @@ const addLogs = async (req, res) => {
         }
 
         const deviceExists = await Devices.findOne({ deviceId })
-        if (!deviceExists) return res.status(400).json({ msg: ' Device Not Found' });
-
-
-        if (!startTime || !endTime) {
-            return res.status(400).json({ msg: 'startTime and endTime are required' });
-        }
+        if (!deviceExists) {return res.status(400).json({ msg: ' Device Not Found' });}
 
         if (updateStatus && !['Running', 'Success', 'Failure'].includes(updateStatus)) {
             return res.status(400).json({ msg: 'Status can be either Success, Failure, or Running' });
         }
 
+        if (!startTime) {
+            return res.status(400).json({ msg: 'startTime is required' });
+        }
+        if((updateStatus === 'Success' || updateStatus === 'Failure') && !endTime) {
+            return res.status(400).json({msg: 'endTime is required when updateStatus is Success or Failure'})
+        }
         const isValidTimeFormat = (time) => /^([0-1]\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(time);
 
-        if (!isValidTimeFormat(startTime) || !isValidTimeFormat(endTime)) {
+        if (!isValidTimeFormat(startTime) || (endTime && !isValidTimeFormat(endTime))) {
             return res.status(400).json({ msg: 'Invalid time format. Use HH:MM:SS' });
         }
 
@@ -109,7 +110,7 @@ const addLogs = async (req, res) => {
 
         const newLog = await Logs.create({
             deviceId, description, softwareVersion, updateStatus, startTime: createDateTime(startTime),
-            endTime: createDateTime(endTime), date: formattedDate
+            endTime: endTime ? createDateTime(endTime): null, date: formattedDate
         })
 
         res.status(201).json({ msg: 'Log added Successfully', log: newLog })

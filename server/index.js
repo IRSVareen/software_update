@@ -4,12 +4,13 @@ const PORT = 3000
 const dbConnection = require('./config/db')
 const deviceRoutes = require('./routes/deviceRoutes')
 const logsRoutes = require('./routes/logsRoutes')
+const cors = require('cors')
 
 app.use(express.json())
 
 //database connection
 dbConnection
-
+app.use(cors())
 app.listen(PORT, ()=>{
     console.log('listening...');
 })

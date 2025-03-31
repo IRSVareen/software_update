@@ -23,9 +23,9 @@ const logsSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    endTime:{
-        type: Date,
-        required: true
+    endTime:{ 
+        type: Date, 
+        required: function() { return this.updateStatus === 'Success' || this.updateStatus === 'Failure'; } 
     },
     date:{
         type: Date,
