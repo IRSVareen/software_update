@@ -29,51 +29,53 @@ const deviceSchema = new mongoose.Schema({
     deviceId:{
         type: String,
         unique: true,
-        required: true
+        // required: true
     },
     updateFlag:{
         type: Boolean,
-        required: true
+        // required: true
     },
     siteName:{
         type: String,
-        required: true
+        // required: true
     },
     lastVersion:{
         type: String,
-        required: true
+        // required: true
     },
     currentVersion:{
         type: String,
-        required: true
+        // required: true
     },
     softwareStatus:{
         type: String,
-        required: true,
+        // required: true,
         enum:['Updated','NotUpdated']
     },
-    status:{
+    updateStatus:{
         type: String,
-        required: true,
-        enum:['Successful','Failure','Running']
+        // required: true,
+        enum:['Success','Failure','Running']
     },
-    event:{
-        type: String,
-        required: true,
-        enum:['RollBack', 'SoftwareUpdate']
-    },
+    // event:{
+    //     type: String,
+    //     // required: true,
+    //     enum:['RollBack', 'SoftwareUpdate']
+    // },
     startTime: {
         type: Date,
-        required: true
+        // required: true
     },
     endTime:{
         type: Date,
-        required: function() {return this.status === 'Successful' || this.status === 'Failure';}
+        // required: function() {return this.status === 'Successful' || this.status === 'Failure';}
     },
     date:{
         type: Date,
-        required: true
+        // required: true
     }
+},{
+    timestamps: true
 })
 
 module.exports = new mongoose.model('Devices', deviceSchema)
